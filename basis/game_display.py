@@ -75,9 +75,9 @@ class Display:
         pg.display.update()
 
         if not env.done: 
-            pg.time.wait(time_fast)
+            pg.time.wait(int(time_fast))
         else:
-            pg.time.wait(time_slow)
+            pg.time.wait(int(time_slow))
     
         if env.done:
             pg.display.quit()

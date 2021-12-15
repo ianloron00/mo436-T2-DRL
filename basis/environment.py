@@ -43,7 +43,7 @@ class GameEnv(gym.Env):
         self.target = None
 
         self.isStochastic = stochastic
-        self.observation_space = Box(low=-SIZE, high=SIZE, shape=(1,8), dtype=np.int32)
+        self.observation_space = Box(low=0, high=SIZE, shape=(8,), dtype=np.int32)
 
         # from 0 to 3.
         self.action_space = Discrete(4,)
@@ -90,8 +90,10 @@ class GameEnv(gym.Env):
 
         return self.observation_space, self.reward, self.done, self.info
 
-    def render(self, time_fast=10, time_slow=500):
+    def render(self, mode="human"):
         # redefine
+        time_fast=10
+        time_slow=500
         self.display.render(self, time_slow=time_slow, time_fast=time_fast)
 
     def close(self):

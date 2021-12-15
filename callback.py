@@ -57,7 +57,7 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
                 if mean_reward > self.best_mean_reward:
                     self.best_mean_reward = mean_reward
                     
-                    path = self.save_path + "/" + self.name
+                    path = self.save_path+"/"+self.name
 
                     if self.verbose > 0:
                         print("Saving new best model to {}".format(self.save_path))

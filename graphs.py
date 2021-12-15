@@ -14,7 +14,6 @@ def plot_training(dirs, num_timesteps, xaxis, title):
         if num_timesteps is not None:
             timesteps = timesteps[timesteps.l.cumsum() <= num_timesteps]
         tslist.append(timesteps)
-
     xy_list = [ts2xy(timesteps_item, xaxis) for timesteps_item in tslist]
     # plot_curves(xy_list, xaxis, task_name)
 
@@ -49,14 +48,14 @@ def plot_training(dirs, num_timesteps, xaxis, title):
     plt.ylabel("Episode Rewards")
     plt.tight_layout()
 
-def plt_training(dir, timesteps, plotter, title, name_model):
+def plt_training(dir, timesteps, plotter, title, img_folder, name_model):
     plot_training(dir, timesteps, plotter, title)
-    plt.savefig(str(dir[0]) + "DQN_training " + name_model + '.png')
+    plt.savefig(img_folder + "DQN-training-" + name_model + '.png')
     plt.show()
 
 def plt_results(dir, timesteps, plotter, title, name_model):
     plot_results(dir, timesteps, plotter, title)
-    plt.savefig(str(dir[0]) + "DQN_res " + name_model + '.png')
+    plt.savefig(str(dir[0]) + "DQN-res-" + name_model + '.png')
     plt.show()
 
 def plt_iter_training(folder_name, x, y):
