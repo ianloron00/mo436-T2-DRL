@@ -1,5 +1,8 @@
 /DQN.zip
 /DQN/*
 /DQN
-/__pycache__
+~/DQN/tmp/
+/__pycache__/
+/__pycache__/*
 /basis/__pycache__
+trial.py
