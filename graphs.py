@@ -7,7 +7,26 @@ import numpy as np
 # https://matplotlib.org/stable/gallery/lines_bars_and_markers/fill_between_demo.html#sphx-glr-gallery-lines-bars-and-markers-fill-between-demo-py
 # https://stable-baselines.readthedocs.io/en/master/_modules/stable_baselines/results_plotter.html#plot_results
 
-def plot_training(dirs, num_timesteps, xaxis, title):
+def plot_num_victories(img_folder, wins):
+    
+    print(f"wins {wins[0:50]}\nlen {len(wins)}")
+    maxx = len(wins)
+    minx = 0
+    x = np.arange(len(wins))
+    EPISODES_WINDOW = min(round(len(x)/2), 1_000)
+
+    x, y_mean = results_plotter.window_func(x, wins, EPISODES_WINDOW, np.mean)
+    
+    plt.figure(figsize=(8, 5))
+    # plt.xlim(minx, len(x))
+    plt.plot(x, y_mean, color='purple')
+    plt.xlabel("episodes")
+    plt.ylabel("mean of winnins")
+    plt.savefig(img_folder+"num_victories.png")
+    plt.show()
+    plt.close()
+
+def plot_training(dirs, num_timesteps, xaxis, title, img_folder="imagesDQN/"):
     tslist = []
     for folder in dirs:
         timesteps = load_results(folder)
@@ -23,7 +42,11 @@ def plot_training(dirs, num_timesteps, xaxis, title):
     
     EPISODES_WINDOW = 300
 
+    wins = np.array([])
     for (i, (x, y)) in enumerate(xy_list):
+
+        print(f"len y: {len(y)}")
+        wins = np.hstack( (wins, 1*(y > -50)) )
         
         plt.scatter(x, y, s=2)
         # Do not plot the smoothed curve at all if the timeseries is shorter than window size.
@@ -42,14 +65,17 @@ def plot_training(dirs, num_timesteps, xaxis, title):
             plt.fill_between(x, y_mean - y_var, y_mean + y_var, alpha=0.1)
             plt.fill_between(x, y_mean - y_err, y_mean + y_err, alpha=0.4)
 
+    plot_num_victories(img_folder=img_folder, wins=wins)
+
     plt.xlim(minx, maxx)
     plt.title(title)
     plt.xlabel(xaxis)
     plt.ylabel("Episode Rewards")
     plt.tight_layout()
 
+
 def plt_training(dir, timesteps, plotter, title, img_folder, name_model):
-    plot_training(dir, timesteps, plotter, title)
+    plot_training(dir, timesteps, plotter, title, img_folder=img_folder)
     plt.savefig(img_folder + "DQN-training-" + name_model + '.png')
     plt.show()
 

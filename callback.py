@@ -15,7 +15,7 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
     :param verbose: (int)
     """
     def __init__(self, check_freq: int, log_dir: str, 
-                 name='best_model', verbose=1, img_folder="images/"):
+                 name='best_model', verbose=1, img_folder="images/", csv_folder="tmp/"):
         super(SaveOnBestTrainingRewardCallback, self).__init__(verbose)
         self.check_freq = check_freq
         self.log_dir = log_dir
@@ -23,24 +23,32 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
         self.best_mean_reward = -np.inf
         self.name = name
         self.episode = 0
-        self.img_folder= img_folder
+        self.img_folder = img_folder
+        self.csv_folder = csv_folder
 
     def _init_callback(self) -> None:
         # Create folder if needed
         if self.save_path is not None:
             os.makedirs(self.save_path, exist_ok=True)
+        
         plt_iter_training(self.img_folder, [], [])
-        ini_csv(self.log_dir)
+        print("callback init csv")
+        ini_csv(self.csv_folder)
 
-    def _on_step(self) -> bool:
+    def _on_step(self, model=None, wins=None) -> bool:
         if self.n_calls % self.check_freq == 0:
 
+            if model is not None:
+              self.model = model
+            
             # Retrieve training reward
             x, y = ts2xy(load_results(self.log_dir), 'timesteps')
 
             if len(x) > 0:
-                
-                save_in_csv(x[self.episode : ], y[self.episode : ])
+                if wins is None:
+                  save_in_csv(x[self.episode : ], y[self.episode : ])
+                else:
+                  save_in_csv(x[self.episode : ], y[self.episode : ], wins[self.episode : ])
                 
                 plt_iter_training(self.img_folder, x, y)                
 
@@ -63,10 +71,6 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
                         print("Saving new best model to {}".format(self.save_path))
                     self.model.save(path)
 
-                # buffer's callback
-                # self.model.save_replay_buffer(self.log_dir + "/replay_buffer")
-                # print("replay buffer saved.")
-
                 # if self.save_in_drive:
                 file_paths = []
 
@@ -76,7 +80,7 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
                         filepath = os.path.join(root, filename)
                         file_paths.append(filepath)
 
-                for root, directories, files in os.walk("tmp/"):
+                for root, directories, files in os.walk(self.csv_folder):
                     for filename in files:
                         # Join the two strings in order to form the full filepath.
                         filepath = os.path.join(root, filename)

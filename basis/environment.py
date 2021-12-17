@@ -88,6 +88,7 @@ class GameEnv(gym.Env):
         self.update_reward(moved=moved)
         self.cum_reward += self.reward
 
+        self.info['won'] = self.won
         return self.observation_space, self.reward, self.done, self.info
 
     def render(self, mode="human"):
